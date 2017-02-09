@@ -48,6 +48,7 @@ type Msg
     | TimeElapsed Int
     | CopyActiveMobsters ()
     | ResetBreakData
+    | UpdateReady String
 
 
 keyboardCombos : List (Keyboard.Combo.KeyCombo Msg)
@@ -136,9 +137,9 @@ port copyActiveMobsters : String -> Cmd msg
 
 port timeElapsed : (Int -> msg) -> Sub msg
 
-
 port onCopyMobstersShortcut : (() -> msg) -> Sub msg
 
+port updateReady : String -> Cmd msg
 
 timerDurationInputView : Int -> Html Msg
 timerDurationInputView duration =
@@ -587,6 +588,9 @@ update msg model =
 
         ResetBreakData ->
             (model |> resetBreakData) ! []
+
+        UpdateReady _ ->
+          { model | experiment = "A new version has been downloaded! " + " will be installed when you exit Mobster." } ! []
 
 
 reorderOperation : List String -> Msg

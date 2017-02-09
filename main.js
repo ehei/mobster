@@ -1,5 +1,6 @@
 const electron = require('electron')
 const {ipcMain, globalShortcut, app, Tray, BrowserWindow, dialog} = require('electron')
+const autoUpdater = require("electron-updater").autoUpdater
 
 const path = require('path')
 const url = require('url')
@@ -70,6 +71,8 @@ function showSetupAgain(setupWindow) {
 }
 
 function createWindow () {
+  autoUpdater.logger = log
+
   mainWindow = new BrowserWindow({
     transparent: true,
     frame: false,
@@ -93,6 +96,8 @@ function createWindow () {
 
   mainWindow.center()
 
+  mainWindow.webContents.send('update-ready', 'Hello')
+
   ipcMain.on('start-timer', (event, flags) => {
     startTimer(flags)
     mainWindow.hide()
@@ -108,6 +113,13 @@ function createWindow () {
     app.quit()
   })
 
+  autoUpdater.signals.updateDownloaded(it => {
+    mainWindow.webContents.send('update-ready', 'test')
+    // Quit and Install should probably be hooked up to a button on the setup/main screen
+    //    and/or do it on exit
+    //autoUpdater.quitAndInstall()
+  })
+
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
@@ -116,6 +128,7 @@ function createWindow () {
     mainWindow = null
   })
 
+  autoUpdater.checkForUpdates()
 
 }
 

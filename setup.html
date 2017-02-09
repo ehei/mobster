@@ -141,6 +141,10 @@
       setup.ports.onCopyMobstersShortcut.send(null)
     })
 
+    setup.ports.updateReady.subscribe(function(version) {
+      ipcRenderer.send('update-ready', version)
+    })
+
     $(() => {
       $('.invisible-trigger').hover(
         () => { $('body').addClass('transparent') },
